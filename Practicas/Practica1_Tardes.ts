@@ -1,156 +1,265 @@
-//Written and Directed By Alvorak
+//Written And Directed By Alvorak
+
+console.clear();
+
 const funcion = (x: number): number => {
-    return x ** 2; //f(x) = x^2
+    return x ** 2;
 };
 
+//∫₀⁴ x² dx
 const inicio = 0;
 const final = 4;
+const numeroRectangulosConst = 500; // para la solución mas aprox
 
-// Crear puntos utilizando el extremo izquierdo
-//area = anchura × altura
+
+// ==================================================
+// PARTE 1 - EJERCICIO PRINCIPAL
+// ==================================================
+
+//anchura = (final - inicio) / nºrectangulos
+//área = anchura × altura
+
+/*
+Crea una función flecha llamada crearPuntos.
+
+La función deberá recibir:
+
+el inicio del intervalo;
+el final del intervalo;
+el número de rectángulos.
+
+Y deberá devolver un array con los puntos que utilizaremos
+para calcular las alturas.
+*/
+
 const crearPuntos = (
     inicio: number,
     final: number,
     numeroRectangulos: number
 ): number[] => {
-    const puntos: number[] = []; //Array de puntos
-    const anchura = (final - inicio) / numeroRectangulos; //Formula de anchura => anchura = (Final - incio) / nº rectangulos
 
-    for (let i = 0; i < numeroRectangulos; i++) { //for para crear los puntos donde vamos a calcular la altura de cada rect
-        puntos.push(inicio + i * anchura);
-    }
+    const puntos: number[] = []; //Array de puntos
+    const anchura = (final - inicio) / numeroRectangulos;
+
+    Array(numeroRectangulos).fill(0).forEach((valor, indice) => {
+        puntos.push(inicio + indice * anchura);
+    });
 
     return puntos;
 };
 
 
-// Crear puntos utilizando el extremo derecho
-//área = anchura × altura
-const crearPuntosDerecha = (
-    inicio: number,
-    final: number,
-    numeroRectangulos: number
-): number[] => {
-    const puntos: number[] = []; //Array de puntos
-    const anchura = (final - inicio) / numeroRectangulos; //Formula de anchura => anchura = (Final - incio) / nº rectangulos
+const puntos = crearPuntos(
+    inicio,
+    final,
+    numeroRectangulosConst
+);
 
-    for (let i = 1; i <= numeroRectangulos; i++) { //for para crear los puntos usando el extremo derecho de cada rect
-        puntos.push(inicio + i * anchura); //Añadimos al array el punto correspondiente al extremo derecho
-    }
+console.log("Puntos:", puntos);
 
-    return puntos; //Devolvemos el array con todos los puntos
-};
 
-// Calcular las áreas de los rectángulos
+/*
+Una vez que tenemos los puntos, necesitamos calcular
+cuánto vale la función en cada uno de ellos.
+
+Para ello utilizaremos map().
+*/
+
+const alturas = puntos.map(
+    punto => funcion(punto)
+);
+
+console.log("Alturas:", alturas);
+
+
+/*
+Ahora necesitamos calcular el área de cada rectángulo.
+
+Primero debemos calcular la anchura:
+*/
+
+const numeroRectangulos = numeroRectangulosConst;
+
+const anchura = (final - inicio) / numeroRectangulos;
+
+console.log("Anchura:", anchura);
+
+
 const calcularAreas = (
     alturas: number[],
     anchura: number
-): number[] => { //Devolveos array de number
-    return alturas.map(altura => altura * anchura); //Formula basica de altura => con map devolvemos nuevo alturas
+): number[] => {
+
+    return alturas.map(
+        altura => altura * anchura
+    );
 };
 
 
-// Sumar las áreas
+const areas = calcularAreas(
+    alturas,
+    anchura
+);
+
+console.log("Áreas:", areas);
+
+
+/*
+Ahora tenemos un array con las áreas de todos los rectángulos.
+
+Crea una función flecha llamada sumarAreas:
+*/
+
 const sumarAreas = (areas: number[]): number => {
-    
+
     let total = 0;
 
-    areas.forEach(area => {
-        total += area; //Sumamos areas
+    areas.forEach((x) => {
+        total += x;
     });
 
     return total;
 };
 
 
-// Sooolucion:
-const numeroRectangulos = 4;
-const anchura = (final - inicio) / numeroRectangulos;
+const areaIzquierda = sumarAreas(areas);
 
+console.log("------------");
 
-// Extremos izquierdos
-const puntosIzquierda = crearPuntos(
-    inicio,
-    final,
-    numeroRectangulos
-);
-
-const alturasIzquierda = puntosIzquierda.map(
-    punto => funcion(punto)
-);
-
-const areasIzquierda = calcularAreas(
-    alturasIzquierda,
-    anchura
-);
-
-const areaIzquierda = sumarAreas(
-    areasIzquierda
+console.log(
+    "Área utilizando extremos izquierdos:",
+    areaIzquierda
 );
 
 
-// Extremos derechos
+// ==================================================
+// PARTE 2 - EXTRA
+// RECTÁNGULOS UTILIZANDO EL EXTREMO DERECHO
+// ==================================================
+
+/*
+En vez de utilizar el extremo izquierdo de cada rectángulo:
+
+[0,1] -> 0
+[1,2] -> 1
+[2,3] -> 2
+[3,4] -> 3
+
+Vamos a utilizar el extremo derecho:
+
+[0,1] -> 1
+[1,2] -> 2
+[2,3] -> 3
+[3,4] -> 4
+*/
+
+
+const crearPuntosDerecha = (
+    inicio: number,
+    final: number,
+    numeroRectangulos: number
+): number[] => {
+
+    const puntos: number[] = []; //Array de puntos
+    const anchura = (final - inicio) / numeroRectangulos;
+
+    Array(numeroRectangulos).fill(0).forEach((valor, indice) => {
+
+        //Sumamos 1 al indice para usar el extremo derecho
+        puntos.push(inicio + (indice + 1) * anchura);
+
+    });
+
+    return puntos;
+};
+
+
 const puntosDerecha = crearPuntosDerecha(
     inicio,
     final,
-    numeroRectangulos
+    numeroRectangulosConst
 );
+
+console.log("------------");
+
+console.log("Puntos derecha:", puntosDerecha);
+
+
+//Calculamos las alturas utilizando los puntos de la derecha
 
 const alturasDerecha = puntosDerecha.map(
     punto => funcion(punto)
 );
+
+console.log("Alturas derecha:", alturasDerecha);
+
+
+//Calculamos las áreas de los rectángulos de la derecha
 
 const areasDerecha = calcularAreas(
     alturasDerecha,
     anchura
 );
 
+console.log("Áreas derecha:", areasDerecha);
+
+
+//Sumamos todas las áreas
+
 const areaDerecha = sumarAreas(
     areasDerecha
 );
 
 
-// Logs de resultados
-console.clear(); //Limpito todo primero
-console.log(`Nº de rectangulos: ${numeroRectangulos}`);
-console.log(`Anchura: ${anchura}`);
-
-console.log("------------");
-
-console.log("Puntos izquierda:", puntosIzquierda);
-console.log("Alturas izquierda:", alturasIzquierda);
-console.log("Areas izquierda:", areasIzquierda);
-
-console.log("------------");
-
-console.log("Puntos derecha:", puntosDerecha);
-console.log("Alturas derecha:", alturasDerecha);
-console.log("Areas derecha:", areasDerecha);
+//Comparación final
 
 console.log("------------");
 
 console.log(
-    `Area utilizando extremos izquierdos: ${areaIzquierda}`
+    "Área utilizando extremos izquierdos:",
+    areaIzquierda
 );
 
 console.log(
-    `Area utilizando extremos derechos: ${areaDerecha}`
+    "Área utilizando extremos derechos:",
+    areaDerecha
 );
 
-console.log("Area exacta: 21.3333");
+console.log(
+    "Área exacta: 21.3333"
+);
 
 
-// Pruebas con otros datos:
+// ==================================================
+// EXTRA - PROBAR DISTINTOS NÚMEROS DE RECTÁNGULOS
+// ==================================================
+
 console.log("------------");
-console.log("Pruebas con distintos nº de rects:");
-const pruebas = [1, 2, 4, 8, 16, 32, 100];
 
-pruebas.forEach(cantidadRectangulos => {
+console.log(
+    "Pruebas con distintos nº de rectángulos:"
+);
+
+
+const pruebas = [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    100
+];
+
+
+pruebas.forEach((cantidadRectangulos) => {
 
     const anchuraPrueba =
         (final - inicio) / cantidadRectangulos;
-    
-    // Izquierda
+
+
+    //Extremo izquierdo
+
     const puntosIzquierdaPrueba = crearPuntos(
         inicio,
         final,
@@ -167,16 +276,19 @@ pruebas.forEach(cantidadRectangulos => {
         anchuraPrueba
     );
 
-    const totalIzquierda =
-        sumarAreas(areasIzquierdaPrueba);
+    const totalIzquierda = sumarAreas(
+        areasIzquierdaPrueba
+    );
 
 
-    // Derecha
+    //Extremo derecho
+
     const puntosDerechaPrueba = crearPuntosDerecha(
         inicio,
         final,
         cantidadRectangulos
     );
+
     const alturasDerechaPrueba =
         puntosDerechaPrueba.map(
             punto => funcion(punto)
@@ -187,12 +299,15 @@ pruebas.forEach(cantidadRectangulos => {
         anchuraPrueba
     );
 
-    const totalDerecha =
-        sumarAreas(areasDerechaPrueba);
+    const totalDerecha = sumarAreas(
+        areasDerechaPrueba
+    );
+
 
     console.log(
         `${cantidadRectangulos} rectángulos -> ` +
         `izquierda: ${totalIzquierda.toFixed(4)} | ` +
         `derecha: ${totalDerecha.toFixed(4)}`
     );
+
 });
